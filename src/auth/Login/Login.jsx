@@ -22,7 +22,7 @@ const RegisterForm = {
 const Login = () => {
   
 
-  const { startLogin ,errorMessage} = useAuthStore();
+  const { startLogin ,errorMessage,startRegister} = useAuthStore();
 
   const { loginEmail, loginPassword, onInputChange: onLoginInputChange } = useForm(loginForm);
 
@@ -39,10 +39,15 @@ const Login = () => {
 
   const registerSubmit = (event) => {
     event.preventDefault();
-    console.log({
-      registerName,
-      registerEmail,
-      registerPassword,
+   /*  if(registerPassword !== registerPassword2){
+      Swal.fire("Error en registrar","Contraseña no son iguales","error");
+      return;
+
+    } */
+    startRegister({
+      name:registerName,
+      email:registerEmail,
+      password:registerPassword,
     });
   }
 

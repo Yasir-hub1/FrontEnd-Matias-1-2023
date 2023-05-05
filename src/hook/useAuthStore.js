@@ -7,8 +7,6 @@ import {
 	onLogout,
 } from "../store/auth/authSlice";
 
-
-
 const useAuthStore = () => {
 	const { status, user, errorMessage } = useSelector(state => state.auth);
 	const dispatch = useDispatch();
@@ -23,15 +21,37 @@ const useAuthStore = () => {
 			localStorage.setItem("token-init-date", new Date().getTime()); // Captura la fecha de guardado
 			dispatch(onLogin({ name: data.name, id: data.id })); //* resguardamos los datos del users
 		} catch (error) {
-
 			dispatch(onLogout("Credenciales incorrectas"));
 
 			setTimeout(() => {
 				dispatch(clearErrorMessage());
 			}, 10);
-
 		}
 	};
+
+	//* Metodo para registrar usuarios
+	const startRegister = async ({ email, password,name }) => {
+		dispatch(onChecking());
+		try {
+			const { data } = await appApi.post("/", { email, password,name }); // poner la ruta de login
+			localStorage.setItem("token", data.token); // resguardo del JWT
+			localStorage.setItem("token-init-date", new Date().getTime()); // Captura la fecha de guardado
+			dispatch(onLogin({ name: data.name, id: data.id })); //* resguardamos los datos del users
+		} catch (error) {
+			dispatch(onLogout(error.response.data?.msg || 'error peji'));
+
+			setTimeout(() => {
+				dispatch(clearErrorMessage());
+			}, 10);
+		}
+	};
+
+
+
+
+
+
+
 
 	return {
 		//* propiedades
@@ -41,6 +61,7 @@ const useAuthStore = () => {
 
 		//* metodos
 		startLogin,
+		startRegister
 	};
 };
 
