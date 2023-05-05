@@ -5,8 +5,14 @@ import { UilSignOutAlt } from "@iconscout/react-unicons";
 import { SidebarData } from "../Data/Data";
 import { UilBars } from "@iconscout/react-unicons";
 import { motion } from "framer-motion";
+import useAuthStore from "../hook/useAuthStore";
 
 const Sidebar = () => {
+
+   //* llamando al metodo startLogout para asignarlo al boton y cerrar session
+
+  const {startLoguot}= useAuthStore();
+
   const [selected, setSelected] = useState(0);
 
   const [expanded, setExpaned] = useState(true)
@@ -52,7 +58,9 @@ const Sidebar = () => {
         })}
         {/* signoutIcon */}
         <div className="menuItem">
-          <UilSignOutAlt />
+        <button onClick={startLoguot} type="button" />
+          {<UilSignOutAlt />}
+                     
         </div>
       </div>
     </motion.div>

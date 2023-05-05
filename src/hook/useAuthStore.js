@@ -30,15 +30,15 @@ const useAuthStore = () => {
 	};
 
 	//* Metodo para registrar usuarios
-	const startRegister = async ({ email, password,name }) => {
+	const startRegister = async ({ email, password, name }) => {
 		dispatch(onChecking());
 		try {
-			const { data } = await appApi.post("/", { email, password,name }); // poner la ruta de login
+			const { data } = await appApi.post("/", { email, password, name }); // poner la ruta de login
 			localStorage.setItem("token", data.token); // resguardo del JWT
 			localStorage.setItem("token-init-date", new Date().getTime()); // Captura la fecha de guardado
 			dispatch(onLogin({ name: data.name, id: data.id })); //* resguardamos los datos del users
 		} catch (error) {
-			dispatch(onLogout(error.response.data?.msg || 'error peji'));
+			dispatch(onLogout(error.response.data?.msg || "error peji"));
 
 			setTimeout(() => {
 				dispatch(clearErrorMessage());
@@ -46,12 +46,28 @@ const useAuthStore = () => {
 		}
 	};
 
+	// verificacion del token
+	const checkAuthToken = async () => {
+		const token = localStorage.getItem("token");
+		if (!token) return dispatch(onLogout());
 
+		try {
+			const { data } = await appApi.get(""); //ruta donde se guarda el token
+			localStorage.setItem("token", data.token); // resguardo del JWT
+			localStorage.setItem("token-init-date", new Date().getTime()); // Captura la fecha de guardado
+			dispatch(onLogin({ name: data.name, id: data.id })); //* resguardamos los datos del users
+		} catch (error) {
+			localStorage.clear();
+			dispatch(onLogout());
+		}
+	};
 
-
-
-
-
+	//* Metodo para cerrar session
+	const startLoguot = () => {
+		console.log("Cerrando session");
+		localStorage.clear();
+		dispatch(onLogout());
+	};
 
 	return {
 		//* propiedades
@@ -61,7 +77,9 @@ const useAuthStore = () => {
 
 		//* metodos
 		startLogin,
-		startRegister
+		startRegister,
+		checkAuthToken,
+		startLoguot,
 	};
 };
 
